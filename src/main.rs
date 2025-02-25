@@ -1,3 +1,14 @@
+use std::env;
+use std::process;
+
 fn main() {
-    println!("Hello, world!");
+    let args: Vec<String> = env::args().skip(1).collect();
+    let config = tiny_grep::Config::build(&args).unwrap_or_else(|err| {
+        println!("Parsing error: {}", err);
+        process::exit(1);
+    });
+    if let Err(err) = tiny_grep::run(config) {
+        println!("Appliction error: {}", err);
+        process::exit(1);
+    }
 }
