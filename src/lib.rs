@@ -10,23 +10,14 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 fn search<'a>(query: &str, content: &'a str, ignorecase: bool) -> Vec<&'a str> {
-    if ignorecase {
-        case_insensitive_search(query, content)
-    } else {
-        case_sensitive_search(query, content)
+    let lns = content.lines();
+    match ignorecase {
+        true => {
+            let query = &query.to_lowercase();
+            lns.filter(|&s| s.to_lowercase().contains(query)).collect()
+        }
+        false => lns.filter(|&s| s.contains(&query)).collect(),
     }
-}
-
-fn case_sensitive_search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
-    content.lines().filter(|&s| s.contains(query)).collect()
-}
-
-fn case_insensitive_search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
-    let query = &query.to_lowercase();
-    content
-        .lines()
-        .filter(|&s| s.to_lowercase().contains(query))
-        .collect()
 }
 
 pub struct Config {
@@ -37,7 +28,11 @@ pub struct Config {
 
 impl Config {
     fn new(query: String, filepath: String, ignorecase: bool) -> Self {
-        Config { query, filepath, ignorecase }
+        Config {
+            query,
+            filepath,
+            ignorecase,
+        }
     }
 
     pub fn build(args: &[String]) -> Result<Self, &'static str> {
@@ -61,7 +56,7 @@ mod tests {
         let content = "Rust:\nsafe, fast, productive.\nPick three.";
         assert_eq!(
             vec!["safe, fast, productive."],
-            case_sensitive_search(query, content)
+            search(query, content, false)
         )
     }
 
@@ -71,7 +66,7 @@ mod tests {
         let content = "Rust:\nsafe, fast, productive.\nPick three.";
         assert_eq!(
             vec!["safe, fast, productive."],
-            case_insensitive_search(query, content)
+            search(query, content, true)
         )
     }
 }
