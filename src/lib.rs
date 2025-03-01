@@ -11,12 +11,11 @@ pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
 
 fn search<'a>(query: &str, content: &'a str, ignorecase: bool) -> Vec<&'a str> {
     let lns = content.lines();
-    match ignorecase {
-        true => {
-            let query = &query.to_lowercase();
-            lns.filter(|&s| s.to_lowercase().contains(query)).collect()
-        }
-        false => lns.filter(|&s| s.contains(&query)).collect(),
+    if ignorecase {
+        let query = &query.to_lowercase();
+        lns.filter(|&s| s.to_lowercase().contains(query)).collect()
+    } else { 
+        lns.filter(|&s| s.contains(&query)).collect()
     }
 }
 
