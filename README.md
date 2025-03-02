@@ -1,4 +1,4 @@
-# Tiny Grep CLI
+# Tiny Grep
 
 A super simple command-line utility for searching text within a single file, similar to grep. This tool allows case-sensitive and case-insensitive searches. It supports searching for a specific pattern and case-sensitive and case-insensitive searches.
 
